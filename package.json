@@ -1,0 +1,10 @@
+{
+  "name": "tabsave-extension",
+  "version": "1.0.0",
+  "description": "Firefox extension для получения информации о вкладках и контейнерах.",
+  "scripts": {
+    "build": "mkdir -p dist && cp manifest.json popup.html popup.js background.js icon.svg dist/"
+  },
+  "author": "",
+  "license": "MIT"
+} 
