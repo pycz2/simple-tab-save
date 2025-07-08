@@ -1,5 +1,5 @@
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('[background] Получено сообщение:', message);
+  console.log('[background] Получено сообщение:', message, 'sender:', sender);
   if (message.action === 'getTabsInfo') {
     (async () => {
       try {
@@ -11,6 +11,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let currentWindow = null;
         if (windowId !== undefined) {
           currentWindow = await browser.windows.get(windowId);
+          console.log('[background] Получено окно по windowId:', currentWindow);
         } else {
           const windows = await browser.windows.getAll({windowTypes: ['normal'], populate: false});
           console.log('[background] Окна:', windows);
@@ -37,7 +38,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           title: tab.title,
           url: tab.url,
           pinned: !!tab.pinned,
-          container: containerMap[tab.cookieStoreId] || 'Без контейнера'
+          container: containerMap[tab.cookieStoreId] || 'Без контейнера',
+          favIconUrl: tab.favIconUrl || ''
         }));
         const snapshot = {
           id: Date.now(),
@@ -59,9 +61,89 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message.action === 'getSnapshots') {
+    console.log('[background] Получен запрос getSnapshots');
     browser.storage.local.get('snapshots').then(data => {
+      console.log('[background] Отправляю snapshots:', data.snapshots);
       sendResponse({ snapshots: Array.isArray(data.snapshots) ? data.snapshots : [] });
     });
+    return true;
+  }
+  if (message.action === 'restoreTabs') {
+    (async () => {
+      try {
+        const { snapshot } = message;
+        console.log('[background] Восстановление вкладок из snapshot:', snapshot);
+        if (!snapshot || !Array.isArray(snapshot.tabs)) throw new Error('Нет данных для восстановления');
+        // Создаём новое окно
+        let newWin = null;
+        try {
+          newWin = await browser.windows.create({
+            titlePreface: "TabSave",
+            focused: true,
+            url: "https://google.com",
+            incognito: false,
+          });
+          console.log('[background] Создано новое окно:', newWin);
+        } catch (winErr) {
+          console.error('[background] Ошибка при создании окна:', winErr);
+          sendResponse({ success: false, error: 'Ошибка при создании окна: ' + winErr.message });
+          return;
+        }
+        const windowId = newWin.id;
+        // Сначала закреплённые, потом обычные
+        const pinnedTabs = snapshot.tabs.filter(tab => !!tab.pinned);
+        const unpinnedTabs = snapshot.tabs.filter(tab => !tab.pinned);
+        for (const tab of [...pinnedTabs, ...unpinnedTabs]) {
+          let createProps = {
+            windowId: windowId,
+            url: tab.url,
+            pinned: !!tab.pinned
+          };
+          console.log('[background] Готовлюсь создать вкладку:', createProps, 'контейнер:', tab.container);
+          // Найти id контейнера по имени, если есть
+          if (tab.container && tab.container !== 'Без контейнера' && browser.contextualIdentities) {
+            const containers = await browser.contextualIdentities.query({});
+            const found = containers.find(c => c.name === tab.container);
+            if (found) {
+              // Проверяем разрешение на контейнер
+              let hasPerm = true;
+              if (browser.permissions) {
+                hasPerm = await browser.permissions.contains({ origins: ["<all_urls>"], permissions: ["cookies", "contextualIdentities"] });
+                console.log('[background] Проверка permissions для контейнера', found.cookieStoreId, 'hasPerm:', hasPerm);
+              }
+              if (hasPerm) {
+                createProps.cookieStoreId = found.cookieStoreId;
+                console.log('[background] Добавлен cookieStoreId:', found.cookieStoreId);
+              } else if (browser.permissions && browser.permissions.request) {
+                try {
+                  const granted = await browser.permissions.request({ permissions: ["contextualIdentities"] });
+                  console.log('[background] permissions.request результат:', granted);
+                  if (granted) {
+                    createProps.cookieStoreId = found.cookieStoreId;
+                  }
+                } catch (e) {
+                  console.warn('[background] Пользователь отказал в permissions.request:', e);
+                  // Пользователь отказал — вкладка будет без контейнера
+                }
+              }
+            } else {
+              console.warn('[background] Контейнер не найден:', tab.container);
+            }
+          }
+          try {
+            await browser.tabs.create(createProps);
+            console.log('[background] Вкладка создана:', createProps);
+          } catch (tabErr) {
+            console.error('[background] Ошибка при создании вкладки:', createProps, tabErr);
+          }
+        }
+        console.log('[background] Восстановление вкладок завершено успешно');
+        sendResponse({ success: true });
+      } catch (e) {
+        console.error('[background] Ошибка восстановления:', e);
+        sendResponse({ success: false, error: e.message });
+      }
+    })();
     return true;
   }
 }); 

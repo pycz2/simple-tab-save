@@ -23,18 +23,32 @@ function showSnapshotsView() {
   document.getElementById('snapshot-detail').classList.add('hidden');
 }
 
+let currentSnapshot = null;
 function showSnapshotDetail(snapshot) {
+  currentSnapshot = snapshot;
   document.getElementById('snapshots-view').classList.add('hidden');
   document.getElementById('snapshot-detail').classList.remove('hidden');
   document.getElementById('detail-title').textContent = `Снимок от ${snapshot.date}`;
   const tabsList = document.getElementById('tabs-list');
   tabsList.innerHTML = '';
   snapshot.tabs.forEach(tab => {
-    const li = document.createElement('li');
-    li.innerHTML = `<b>${tab.title}</b><br>URL: <a href="${tab.url}" target="_blank">${tab.url}</a><br>Контейнер: ${tab.container}<br>Тип: ${tab.pinned ? 'Закреплена' : 'Обычная'}`;
+    let li = document.createElement('li');
+    let iconHtml = tab.favIconUrl ? `<img src="${tab.favIconUrl}" alt="icon" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 2px #aaa;">` : '';
+    li.innerHTML = `${iconHtml}<b>${tab.title}</b><br>URL: <a href="${tab.url}" target="_blank">${tab.url}</a><br>Контейнер: ${tab.container}<br>Тип: ${tab.pinned ? 'Закреплена' : 'Обычная'}`;
     tabsList.appendChild(li);
   });
 }
+
+document.getElementById('restore-tabs').addEventListener('click', async () => {
+  if (!currentSnapshot) return;
+  if (!confirm('Восстановить все вкладки из этого снимка в текущем окне?')) return;
+  try {
+    const win = await browser.windows.getCurrent();
+    await browser.runtime.sendMessage({ action: 'restoreTabs', snapshot: currentSnapshot, windowId: win.id });
+  } catch (e) {
+    alert('Ошибка при восстановлении: ' + e.message);
+  }
+});
 
 document.getElementById('fetch-tabs').addEventListener('click', async () => {
   document.getElementById('fetch-tabs').disabled = true;

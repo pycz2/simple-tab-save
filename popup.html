@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>TabSave Extension</title>
   <style>
-    body { font-family: sans-serif; margin: 16px; width: 680px; min-height: 2000px; }
+    body { font-family: sans-serif; margin: 16px; width: 340px; min-height: 2000px; }
     button { margin-bottom: 12px; width: 100%; }
     ul { padding-left: 0; list-style: none; }
     li { margin-bottom: 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; padding: 8px; background: #f9f9f9; }
@@ -13,18 +13,31 @@
     .back-btn { margin-bottom: 8px; }
     .snapshot-title { font-weight: bold; margin-bottom: 8px; }
     .tab-list { font-size: 14px; }
-    .tab-list li { border: none; background: none; cursor: default; padding: 0; }
+    .tab-list li {
+      border: 1px solid #1976d2;
+      background: #e3f2fd;
+      cursor: default;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(25, 118, 210, 0.08);
+      transition: box-shadow 0.2s;
+    }
+    .tab-list li:hover {
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
+    }
   </style>
 </head>
 <body>
   <button id="fetch-tabs">Сохранить текущие вкладки</button>
-  <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Очистить все сохранения</button>
   <div id="snapshots-view">
+    <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Очистить все сохранения</button>
     <div class="snapshot-title">Сохранённые снимки:</div>
     <ul id="snapshots-list"></ul>
   </div>
   <div id="snapshot-detail" class="hidden">
     <button class="back-btn" id="back-btn">Назад</button>
+    <button id="restore-tabs" style="margin-bottom:12px;background:#43a047;color:#fff;">Восстановить вкладки</button>
     <div class="snapshot-title" id="detail-title"></div>
     <ul class="tab-list" id="tabs-list"></ul>
   </div>
