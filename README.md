@@ -38,4 +38,4 @@ No build required — all files are ready to be loaded into Firefox.
 - `popup.js` — popup logic and UI
 - `background.js` — background logic (tab info, saving, restoring)
 - `icon.svg` — extension icon
-- `build.py` — script to package the extension (optional) 
+- `build.py` — script to package the extension (optional)
