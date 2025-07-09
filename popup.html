@@ -4,35 +4,206 @@
   <meta charset="UTF-8">
   <title>TabSave Extension</title>
   <style>
-    body { font-family: sans-serif; margin: 16px; width: 340px; max-height: 600px; overflow-y: auto; }
-    button { margin-bottom: 12px; width: 100%; }
-    ul { padding-left: 0; list-style: none; }
-    li { margin-bottom: 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; padding: 8px; background: #f9f9f9; }
-    li:hover { background: #e3f2fd; }
+    :root {
+      --background: #fff;
+      --foreground: #222;
+      --border: #ccc;
+      --border-strong: #1976d2;
+      --background-hover: #e3f2fd;
+      --background-list: #f9f9f9;
+      --button-bg: #e53935;
+      --button-color: #fff;
+      --button-success-bg: #43a047;
+      --button-success-color: #fff;
+      --shadow: 0 2px 6px rgba(25, 118, 210, 0.08);
+      --shadow-hover: 0 4px 16px rgba(25, 118, 210, 0.18);
+      --input-bg: #fff;
+      --input-color: #222;
+      --input-border: #bbb;
+      --input-focus-bg: #e3f2fd;
+      --input-focus-border: #1976d2;
+      --label-date: #888;
+      --label-count: #d32f2f;
+    }
+    a {
+      color: var(--border-strong);
+      text-decoration: underline;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #181a20;
+        --foreground: #f1f1f1;
+        --border: #333a4d;
+        --border-strong: #90caf9;
+        --background-hover: #263245;
+        --background-list: #232634;
+        --button-bg: #b71c1c;
+        --button-color: #fff;
+        --button-success-bg: #388e3c;
+        --button-success-color: #fff;
+        --shadow: 0 2px 6px rgba(144, 202, 249, 0.08);
+        --shadow-hover: 0 4px 16px rgba(144, 202, 249, 0.18);
+        --input-bg: #232634;
+        --input-color: #f1f1f1;
+        --input-border: #555e7b;
+        --input-focus-bg: #263245;
+        --input-focus-border: #90caf9;
+        --label-date: #b0b0b0;
+        --label-count: #ff8a65;
+        --link-color: #90caf9;
+      }
+      a {
+        color: var(--link-color);
+      }
+      #fetch-tabs {
+        background: var(--button-success-bg) !important;
+        color: var(--button-success-color) !important;
+      }
+    }
+    body {
+      font-family: sans-serif;
+      margin: 16px;
+      width: 340px;
+      max-height: 600px;
+      overflow-y: auto;
+      background: var(--background);
+      color: var(--foreground);
+      transition: background 0.2s, color 0.2s;
+    }
+    body[data-theme="light"] {
+      --background: #fff;
+      --foreground: #222;
+      --border: #ccc;
+      --border-strong: #1976d2;
+      --background-hover: #e3f2fd;
+      --background-list: #f9f9f9;
+      --button-bg: #e53935;
+      --button-color: #fff;
+      --button-success-bg: #43a047;
+      --button-success-color: #fff;
+      --shadow: 0 2px 6px rgba(25, 118, 210, 0.08);
+      --shadow-hover: 0 4px 16px rgba(25, 118, 210, 0.18);
+      --input-bg: #fff;
+      --input-color: #222;
+      --input-border: #bbb;
+      --input-focus-bg: #e3f2fd;
+      --input-focus-border: #1976d2;
+      --label-date: #888;
+      --label-count: #d32f2f;
+      --link-color: #1976d2;
+    }
+    body[data-theme="dark"] {
+      --background: #181a20;
+      --foreground: #f1f1f1;
+      --border: #333a4d;
+      --border-strong: #90caf9;
+      --background-hover: #263245;
+      --background-list: #232634;
+      --button-bg: #b71c1c;
+      --button-color: #fff;
+      --button-success-bg: #388e3c;
+      --button-success-color: #fff;
+      --shadow: 0 2px 6px rgba(144, 202, 249, 0.08);
+      --shadow-hover: 0 4px 16px rgba(144, 202, 249, 0.18);
+      --input-bg: #232634;
+      --input-color: #f1f1f1;
+      --input-border: #555e7b;
+      --input-focus-bg: #263245;
+      --input-focus-border: #90caf9;
+      --label-date: #b0b0b0;
+      --label-count: #ff8a65;
+      --link-color: #90caf9;
+    }
+    body[data-theme="light"] a {
+      color: #1976d2;
+    }
+    body[data-theme="dark"] a {
+      color: #90caf9;
+    }
+    body[data-theme="light"] #fetch-tabs {
+      background: #43a047 !important;
+      color: #fff !important;
+    }
+    body[data-theme="dark"] #fetch-tabs {
+      background: #43a047 !important;
+      color: #fff !important;
+    }
+    body[data-theme="light"] #clear-snapshots {
+      background: #e53935 !important;
+      color: #fff !important;
+    }
+    body[data-theme="dark"] #clear-snapshots {
+      background: #b71c1c !important;
+      color: #fff !important;
+    }
+    body[data-theme="light"] #restore-tabs {
+      background: #43a047 !important;
+      color: #fff !important;
+    }
+    body[data-theme="dark"] #restore-tabs {
+      background: #388e3c !important;
+      color: #fff !important;
+    }
+    button {
+      margin-bottom: 12px;
+      width: 100%;
+      background: var(--button-bg);
+      color: var(--button-color);
+      border: none;
+      border-radius: 4px;
+      padding: 8px 0;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    button#restore-tabs {
+      background: var(--button-success-bg);
+      color: var(--button-success-color);
+    }
+    button#clear-snapshots {
+      background: var(--button-bg);
+      color: var(--button-color);
+    }
+    ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    li {
+      margin-bottom: 8px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px;
+      background: var(--background-list);
+      transition: background 0.2s, border 0.2s;
+    }
+    li:hover {
+      background: var(--background-hover);
+    }
     .hidden { display: none; }
     .back-btn { margin-bottom: 8px; }
     .snapshot-title { font-weight: bold; margin-bottom: 8px; }
     .tab-list { font-size: 14px; }
     .tab-list li {
-      border: 1px solid #1976d2;
-      background: #e3f2fd;
+      border: 1px solid var(--border-strong);
+      background: var(--background-hover);
       cursor: default;
       padding: 12px;
       margin-bottom: 12px;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(25, 118, 210, 0.08);
-      transition: box-shadow 0.2s;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s, background 0.2s, border 0.2s;
     }
     .tab-list li:hover {
-      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
+      box-shadow: var(--shadow-hover);
     }
     .emoji-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #fff;
-      color: #222;
-      border: 1px solid #bbb;
+      background: var(--input-bg);
+      color: var(--input-color);
+      border: 1px solid var(--input-border);
       border-radius: 6px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
       padding: 0;
@@ -42,14 +213,14 @@
       width: 28px;
       height: 28px;
       line-height: 1;
-      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
+      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
       margin-left: 2px;
       margin-right: 2px;
       outline: none;
     }
     .emoji-btn:hover, .emoji-btn:focus {
-      background: #e3f2fd;
-      border-color: #1976d2;
+      background: var(--input-focus-bg);
+      border-color: var(--input-focus-border);
       box-shadow: 0 2px 8px rgba(25,118,210,0.13);
     }
     .snapshot-label-name {
@@ -57,20 +228,75 @@
     }
     .snapshot-label-date {
       font-size: 12px;
-      color: #888;
+      color: var(--label-date);
       font-style: italic;
       margin-left: 4px;
       margin-right: 4px;
     }
     .snapshot-label-count {
       font-weight: bold;
-      color: #d32f2f;
+      color: var(--label-count);
       margin-left: 2px;
+    }
+    input[type="text"] {
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+      background: var(--input-bg);
+      color: var(--input-color);
+      border: 1px solid var(--input-border);
+      border-radius: 4px;
+      transition: background 0.2s, color 0.2s, border 0.2s;
+    }
+    input[type="text"]:focus {
+      background: var(--input-focus-bg);
+      border-color: var(--input-focus-border);
+      outline: none;
+    }
+    .gear-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--input-bg);
+      color: var(--input-color);
+      border: 1px solid var(--input-border);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      padding: 0;
+      cursor: pointer;
+      font-size: 20px;
+      min-width: 0;
+      width: 32px;
+      height: 32px;
+      line-height: 1;
+      margin-left: 6px;
+      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+      outline: none;
+    }
+    .gear-btn:hover, .gear-btn:focus {
+      background: var(--input-focus-bg);
+      border-color: var(--input-focus-border);
+      color: var(--border-strong);
+      box-shadow: 0 2px 8px rgba(25,118,210,0.13);
     }
   </style>
 </head>
-<body>
-  <input id="snapshot-name" type="text" placeholder="Имя сохранения (необязательно)" style="width:100%;margin-bottom:8px;padding:6px 8px;font-size:15px;box-sizing:border-box;">
+<body data-theme="system">
+  <div style="display:flex;align-items:center;margin-bottom:8px;">
+    <input id="snapshot-name" type="text" placeholder="Имя сохранения (необязательно)" style="flex:1;margin-bottom:0;padding:6px 8px;font-size:15px;box-sizing:border-box;height:32px;">
+    <button id="theme-gear-btn" class="gear-btn" title="Тема">⚙️</button>
+  </div>
+  <div id="theme-select-wrapper" style="display:none;position:relative;margin-bottom:8px;">
+    <label for="theme-select" style="font-size:14px;">Тема:
+      <select id="theme-select" style="margin-left:6px;font-size:14px;">
+        <option value="system">Как в системе</option>
+        <option value="light">Светлая</option>
+        <option value="dark">Тёмная</option>
+      </select>
+    </label>
+  </div>
   <button id="fetch-tabs">Сохранить текущие вкладки</button>
   <div id="snapshots-view">
     <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Очистить все сохранения</button>

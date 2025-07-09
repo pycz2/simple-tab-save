@@ -125,5 +125,38 @@ document.getElementById('clear-snapshots').addEventListener('click', async () =>
   renderSnapshotsList([]);
 });
 
+// --- Тема ---
+function applyTheme(theme) {
+  const body = document.body;
+  if (theme === 'light' || theme === 'dark') {
+    body.setAttribute('data-theme', theme);
+  } else {
+    body.removeAttribute('data-theme');
+  }
+}
+
+const themeSelect = document.getElementById('theme-select');
+const themeSelectWrapper = document.getElementById('theme-select-wrapper');
+const themeGearBtn = document.getElementById('theme-gear-btn');
+
+if (themeGearBtn && themeSelectWrapper) {
+  themeGearBtn.addEventListener('click', () => {
+    themeSelectWrapper.style.display = themeSelectWrapper.style.display === 'none' ? 'block' : 'none';
+  });
+}
+
+if (themeSelect) {
+  // При изменении селектора
+  themeSelect.addEventListener('change', (e) => {
+    const value = e.target.value;
+    localStorage.setItem('tabsave_theme', value);
+    applyTheme(value);
+  });
+  // При загрузке
+  const saved = localStorage.getItem('tabsave_theme') || 'system';
+  themeSelect.value = saved;
+  applyTheme(saved);
+}
+
 // Инициализация
 fetchSnapshots().then(renderSnapshotsList); 
