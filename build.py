@@ -30,10 +30,10 @@ def main():
     clean_dist()
     copy_files()
     make_zip()
-    # Создать копию архива с расширением .xpi
+    # Create a copy of the archive with the .xpi extension
     xpi_name = ZIP_NAME.replace('.zip', '.xpi')
     shutil.copy(ZIP_NAME, xpi_name)
-    print(f'Сборка завершена. Файлы в ./{DIST_DIR}, архив: {ZIP_NAME}, XPI: {xpi_name}')
+    print(f'Build complete. Files in ./{DIST_DIR}, archive: {ZIP_NAME}, XPI: {xpi_name}')
 
 if __name__ == '__main__':
     main() 

@@ -286,39 +286,39 @@
 <body data-theme="system" style="margin-top:10px;">
   <div style="text-align:center;font-size:20px;font-weight:bold;margin-bottom:12px;">TabSave Extension</div>
   <div style="display:flex;align-items:center;margin-bottom:8px;">
-    <input id="snapshot-name" type="text" placeholder="Имя сохранения (необязательно)" style="flex:1;margin-bottom:0;padding:6px 8px;font-size:15px;box-sizing:border-box;height:32px;">
-    <button id="theme-gear-btn" class="gear-btn" title="Тема">⚙️</button>
-    <button id="download-json-btn" class="gear-btn" title="Скачать конфиг" style="margin-left:4px;">⬇️</button>
+    <input id="snapshot-name" type="text" placeholder="Snapshot name (optional)" style="flex:1;margin-bottom:0;padding:6px 8px;font-size:15px;box-sizing:border-box;height:32px;">
+    <button id="theme-gear-btn" class="gear-btn" title="Theme">⚙️</button>
+    <button id="download-json-btn" class="gear-btn" title="Download config" style="margin-left:4px;">⬇️</button>
   </div>
   <div id="theme-select-wrapper" style="display:none;position:relative;margin-bottom:8px;">
-    <label for="theme-select" style="font-size:14px;">Тема:
+    <label for="theme-select" style="font-size:14px;">Theme:
       <select id="theme-select" style="margin-left:6px;font-size:14px;">
-        <option value="system">Как в системе</option>
-        <option value="light">Светлая</option>
-        <option value="dark">Тёмная</option>
+        <option value="system">As system</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
       </select>
     </label>
   </div>
-  <button id="fetch-tabs">Сохранить текущие вкладки</button>
+  <button id="fetch-tabs">Save current tabs</button>
   <div id="snapshots-view">
-    <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Очистить все сохранения</button>
-    <div class="snapshot-title">Сохранённые снимки:</div>
+    <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Clear all snapshots</button>
+    <div class="snapshot-title">Saved snapshots:</div>
     <ul id="snapshots-list"></ul>
     <template id="snapshot-item-template">
       <li class="snapshot-item-container" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <span class="snapshot-label"></span>
         <input class="edit-name-input" type="text" style="display:none;width:100%;margin-right:2px;font-size:13px;padding:2px 4px;">
         <div class="snapshot-btns" style="display:flex;align-items:center;gap:2px;margin-left:auto;align-self:center;">
-          <button class="edit-name-btn emoji-btn" title="Редактировать">✏️</button>
-          <button class="save-name-btn emoji-btn" title="Сохранить" style="display:none;">💾</button>
-          <button class="delete-snapshot-btn emoji-btn" title="Удалить">🗑️</button>
+          <button class="edit-name-btn emoji-btn" title="Edit">✏️</button>
+          <button class="save-name-btn emoji-btn" title="Save" style="display:none;">💾</button>
+          <button class="delete-snapshot-btn emoji-btn" title="Delete">🗑️</button>
         </div>
       </li>
     </template>
   </div>
   <div id="snapshot-detail" class="hidden">
-    <button class="back-btn" id="back-btn">Назад</button>
-    <button id="restore-tabs" style="margin-bottom:12px;background:#43a047;color:#fff;">Восстановить вкладки</button>
+    <button class="back-btn" id="back-btn">Back</button>
+    <button id="restore-tabs" style="margin-bottom:12px;background:#43a047;color:#fff;">Restore tabs</button>
     <div class="snapshot-title" id="detail-title"></div>
     <ul class="tab-list" id="tabs-list"></ul>
   </div>

@@ -7,20 +7,20 @@ function renderSnapshotsList(snapshots) {
   const list = document.getElementById('snapshots-list');
   list.innerHTML = '';
   if (!snapshots.length) {
-    list.innerHTML = '<li>Нет сохранённых снимков</li>';
+    list.innerHTML = '<li>No saved snapshots</li>';
     return;
   }
   const template = document.getElementById('snapshot-item-template');
   snapshots.forEach((snap, idx) => {
     const li = template.content.firstElementChild.cloneNode(true);
-    // Имя и количество вкладок на первой строке, дата — на второй
+    // Name and tab count on the first line, date on the second
     let labelHtml = '';
     labelHtml += `<span class='snapshot-label-name'>${snap.name || 'NoName'}</span>`;
     labelHtml += ` <span class='snapshot-label-count'>(${snap.tabs.length})</span>`;
     labelHtml += `<br><span class='snapshot-label-date'>${snap.date}</span>`;
     li.querySelector('.snapshot-label').innerHTML = labelHtml;
     li.onclick = (event) => {
-      // Не открывать детали, если клик по input или кнопке
+      // Do not open details if click is on input or button
       if (
         event.target.tagName === 'INPUT' ||
         event.target.tagName === 'BUTTON' ||
@@ -33,16 +33,16 @@ function renderSnapshotsList(snapshots) {
       }
       showSnapshotDetail(snap);
     };
-    // Кнопка удалить
+    // Delete button
     li.querySelector('.delete-snapshot-btn').onclick = async (e) => {
       e.stopPropagation();
-      if (!confirm('Удалить это сохранение?')) return;
+      if (!confirm('Delete this snapshot?')) return;
       const { snapshots: all } = await browser.runtime.sendMessage({ action: 'getSnapshots' });
       const filtered = all.filter(s => s.id !== snap.id);
       await browser.storage.local.set({ snapshots: filtered });
       renderSnapshotsList(filtered);
     };
-    // Кнопка редактировать имя
+    // Edit name button
     const editBtn = li.querySelector('.edit-name-btn');
     const saveBtn = li.querySelector('.save-name-btn');
     const input = li.querySelector('.edit-name-input');
@@ -55,7 +55,7 @@ function renderSnapshotsList(snapshots) {
       li.querySelector('.snapshot-label').style.display = 'none';
       input.focus();
     };
-    // Сохранить новое имя
+    // Save new name
     saveBtn.onclick = async (e) => {
       e.stopPropagation();
       const newName = input.value.trim();
@@ -64,7 +64,7 @@ function renderSnapshotsList(snapshots) {
       await browser.storage.local.set({ snapshots: updated });
       renderSnapshotsList(updated);
     };
-    // Enter в input сохраняет
+    // Enter in input saves
     input.onkeydown = (e) => {
       if (e.key === 'Enter') saveBtn.onclick(e);
       if (e.key === 'Escape') {
@@ -88,7 +88,7 @@ function showSnapshotDetail(snapshot) {
   currentSnapshot = snapshot;
   document.getElementById('snapshots-view').classList.add('hidden');
   document.getElementById('snapshot-detail').classList.remove('hidden');
-  document.getElementById('detail-title').textContent = snapshot.name ? `Сохранение: ${snapshot.name}` : `Снимок от ${snapshot.date}`;
+  document.getElementById('detail-title').textContent = snapshot.name ? `Save: ${snapshot.name}` : `Snapshot from ${snapshot.date}`;
   const tabsList = document.getElementById('tabs-list');
   tabsList.innerHTML = '';
   snapshot.tabs.forEach(tab => {
@@ -103,18 +103,18 @@ function showSnapshotDetail(snapshot) {
 
 document.getElementById('restore-tabs').addEventListener('click', async () => {
   if (!currentSnapshot) return;
-  if (!confirm('Восстановить все вкладки из этого снимка в текущем окне?')) return;
+  if (!confirm('Restore all tabs from this snapshot in the current window?')) return;
   try {
     const win = await browser.windows.getCurrent();
     await browser.runtime.sendMessage({ action: 'restoreTabs', snapshot: currentSnapshot, windowId: win.id });
   } catch (e) {
-    alert('Ошибка при восстановлении: ' + e.message);
+    alert('Error while restoring: ' + e.message);
   }
 });
 
 document.getElementById('fetch-tabs').addEventListener('click', async () => {
   document.getElementById('fetch-tabs').disabled = true;
-  document.getElementById('fetch-tabs').textContent = 'Сохраняю...';
+  document.getElementById('fetch-tabs').textContent = 'Saving...';
   try {
     const win = await browser.windows.getCurrent();
     const name = document.getElementById('snapshot-name').value.trim();
@@ -123,19 +123,19 @@ document.getElementById('fetch-tabs').addEventListener('click', async () => {
       const snapshots = await fetchSnapshots();
       renderSnapshotsList(snapshots);
     } else {
-      alert('Ошибка при сохранении: ' + (res && res.error ? res.error : 'Неизвестно'));
+      alert('Error while saving: ' + (res && res.error ? res.error : 'Unknown'));
     }
   } catch (e) {
-    alert('Ошибка: ' + e.message);
+    alert('Error: ' + e.message);
   }
   document.getElementById('fetch-tabs').disabled = false;
-  document.getElementById('fetch-tabs').textContent = 'Сохранить текущие вкладки';
+  document.getElementById('fetch-tabs').textContent = 'Save current tabs';
 });
 
 document.getElementById('back-btn').addEventListener('click', showSnapshotsView);
 
 document.getElementById('clear-snapshots').addEventListener('click', async () => {
-  if (!confirm('Удалить все сохранённые снимки?')) return;
+  if (!confirm('Delete all saved snapshots?')) return;
   await browser.storage.local.set({ snapshots: [] });
   renderSnapshotsList([]);
 });
@@ -154,7 +154,7 @@ if (downloadJsonBtn) {
   });
 }
 
-// --- Тема ---
+// --- Theme ---
 function applyTheme(theme) {
   const body = document.body;
   if (theme === 'light' || theme === 'dark') {
