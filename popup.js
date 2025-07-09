@@ -19,7 +19,20 @@ function renderSnapshotsList(snapshots) {
     labelHtml += ` <span class='snapshot-label-count'>(${snap.tabs.length})</span>`;
     labelHtml += `<br><span class='snapshot-label-date'>${snap.date}</span>`;
     li.querySelector('.snapshot-label').innerHTML = labelHtml;
-    li.onclick = () => showSnapshotDetail(snap);
+    li.onclick = (event) => {
+      // Не открывать детали, если клик по input или кнопке
+      if (
+        event.target.tagName === 'INPUT' ||
+        event.target.tagName === 'BUTTON' ||
+        event.target.classList.contains('edit-name-input') ||
+        event.target.classList.contains('edit-name-btn') ||
+        event.target.classList.contains('save-name-btn') ||
+        event.target.classList.contains('delete-snapshot-btn')
+      ) {
+        return;
+      }
+      showSnapshotDetail(snap);
+    };
     // Кнопка удалить
     li.querySelector('.delete-snapshot-btn').onclick = async (e) => {
       e.stopPropagation();
