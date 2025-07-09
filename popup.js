@@ -80,8 +80,10 @@ function showSnapshotDetail(snapshot) {
   tabsList.innerHTML = '';
   snapshot.tabs.forEach(tab => {
     let li = document.createElement('li');
+    let pinEmoji = tab.pinned ? '📌 ' : '';
+    let colorBox = tab.containerColor ? `<span style='display:inline-block;width:14px;height:14px;border-radius:3px;background:${tab.containerColor};margin-right:6px;vertical-align:middle;border:1px solid #bbb;box-shadow:0 1px 2px #aaa;'></span>` : '';
     let iconHtml = tab.favIconUrl ? `<img src="${tab.favIconUrl}" alt="icon" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 2px #aaa;">` : '';
-    li.innerHTML = `${iconHtml}<b>${tab.title}</b><br>URL: <a href="${tab.url}" target="_blank">${tab.url}</a><br>Контейнер: ${tab.container}<br>Тип: ${tab.pinned ? 'Закреплена' : 'Обычная'}`;
+    li.innerHTML = `${pinEmoji}${colorBox}${iconHtml}<b>${tab.title}</b><br>URL: <a href="${tab.url}" target="_blank">${tab.url}</a>`;
     tabsList.appendChild(li);
   });
 }

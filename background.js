@@ -29,16 +29,17 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           containers = await browser.contextualIdentities.query({});
           console.log('[background] Контейнеры:', containers);
         }
-        const containerMap = {};
+        const containerInfoMap = {};
         for (const c of containers) {
-          containerMap[c.cookieStoreId] = c.name;
+          containerInfoMap[c.cookieStoreId] = { name: c.name, color: c.color };
         }
         // Формируем снимок для сохранения
         const snapshotTabs = tabs.map(tab => ({
           title: tab.title,
           url: tab.url,
           pinned: !!tab.pinned,
-          container: containerMap[tab.cookieStoreId] || 'Без контейнера',
+          container: containerInfoMap[tab.cookieStoreId]?.name || 'Без контейнера',
+          containerColor: containerInfoMap[tab.cookieStoreId]?.color || '',
           favIconUrl: tab.favIconUrl || ''
         }));
         // Формируем дату в формате dd.mm.yy HH:MM
