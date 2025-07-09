@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>TabSave Extension</title>
   <style>
-    body { font-family: sans-serif; margin: 16px; width: 340px; min-height: 2000px; }
+    body { font-family: sans-serif; margin: 16px; width: 340px; max-height: 600px; overflow-y: auto; }
     button { margin-bottom: 12px; width: 100%; }
     ul { padding-left: 0; list-style: none; }
     li { margin-bottom: 8px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; padding: 8px; background: #f9f9f9; }
@@ -77,10 +77,10 @@
     <div class="snapshot-title">Сохранённые снимки:</div>
     <ul id="snapshots-list"></ul>
     <template id="snapshot-item-template">
-      <li style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <li class="snapshot-item-container" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <span class="snapshot-label"></span>
         <input class="edit-name-input" type="text" style="display:none;width:100%;margin-right:2px;font-size:13px;padding:2px 4px;">
-        <div class="snapshot-btns" style="display:flex;align-items:center;gap:2px;margin-left:auto;">
+        <div class="snapshot-btns" style="display:flex;align-items:center;gap:2px;margin-left:auto;align-self:center;">
           <button class="edit-name-btn emoji-btn" title="Редактировать">✏️</button>
           <button class="save-name-btn emoji-btn" title="Сохранить" style="display:none;">💾</button>
           <button class="delete-snapshot-btn emoji-btn" title="Удалить">🗑️</button>

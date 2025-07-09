@@ -19,7 +19,7 @@ function renderSnapshotsList(snapshots) {
     labelHtml += ` <span class='snapshot-label-count'>(${snap.tabs.length})</span>`;
     labelHtml += `<br><span class='snapshot-label-date'>${snap.date}</span>`;
     li.querySelector('.snapshot-label').innerHTML = labelHtml;
-    li.querySelector('.snapshot-label').onclick = () => showSnapshotDetail(snap);
+    li.onclick = () => showSnapshotDetail(snap);
     // Кнопка удалить
     li.querySelector('.delete-snapshot-btn').onclick = async (e) => {
       e.stopPropagation();
