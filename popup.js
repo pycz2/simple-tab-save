@@ -127,6 +127,20 @@ document.getElementById('clear-snapshots').addEventListener('click', async () =>
   renderSnapshotsList([]);
 });
 
+const downloadJsonBtn = document.getElementById('download-json-btn');
+if (downloadJsonBtn) {
+  downloadJsonBtn.addEventListener('click', async () => {
+    const snapshots = await fetchSnapshots();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(snapshots, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute('href', dataStr);
+    dlAnchor.setAttribute('download', 'tabsave_snapshots.json');
+    document.body.appendChild(dlAnchor);
+    dlAnchor.click();
+    document.body.removeChild(dlAnchor);
+  });
+}
+
 // --- Тема ---
 function applyTheme(theme) {
   const body = document.body;
