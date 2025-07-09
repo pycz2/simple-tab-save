@@ -41,10 +41,15 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           container: containerMap[tab.cookieStoreId] || 'Без контейнера',
           favIconUrl: tab.favIconUrl || ''
         }));
+        // Формируем дату в формате dd.mm.yy HH:MM
+        const now = new Date();
+        const pad = n => n.toString().padStart(2, '0');
+        const dateStr = `${pad(now.getDate())}.${pad(now.getMonth()+1)}.${now.getFullYear().toString().slice(-2)} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
         const snapshot = {
           id: Date.now(),
-          date: new Date().toLocaleString(),
-          tabs: snapshotTabs
+          date: dateStr,
+          tabs: snapshotTabs,
+          name: message.name && message.name.trim() ? message.name : 'NoName'
         };
         // Сохраняем снимок в storage.local
         const prev = await browser.storage.local.get('snapshots');

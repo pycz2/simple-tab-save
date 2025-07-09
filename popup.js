@@ -13,8 +13,14 @@ function renderSnapshotsList(snapshots) {
   const template = document.getElementById('snapshot-item-template');
   snapshots.forEach((snap, idx) => {
     const li = template.content.firstElementChild.cloneNode(true);
-    li.querySelector('.snapshot-label').textContent = `${snap.date} (${snap.tabs.length} вкладок)`;
+    // Имя и количество вкладок на первой строке, дата — на второй
+    let labelHtml = '';
+    labelHtml += `<span class='snapshot-label-name'>${snap.name || 'NoName'}</span>`;
+    labelHtml += ` <span class='snapshot-label-count'>(${snap.tabs.length})</span>`;
+    labelHtml += `<br><span class='snapshot-label-date'>${snap.date}</span>`;
+    li.querySelector('.snapshot-label').innerHTML = labelHtml;
     li.querySelector('.snapshot-label').onclick = () => showSnapshotDetail(snap);
+    // Кнопка удалить
     li.querySelector('.delete-snapshot-btn').onclick = async (e) => {
       e.stopPropagation();
       if (!confirm('Удалить это сохранение?')) return;
@@ -22,6 +28,38 @@ function renderSnapshotsList(snapshots) {
       const filtered = all.filter(s => s.id !== snap.id);
       await browser.storage.local.set({ snapshots: filtered });
       renderSnapshotsList(filtered);
+    };
+    // Кнопка редактировать имя
+    const editBtn = li.querySelector('.edit-name-btn');
+    const saveBtn = li.querySelector('.save-name-btn');
+    const input = li.querySelector('.edit-name-input');
+    editBtn.onclick = (e) => {
+      e.stopPropagation();
+      input.value = snap.name || '';
+      input.style.display = 'inline-block';
+      saveBtn.style.display = 'inline-block';
+      editBtn.style.display = 'none';
+      li.querySelector('.snapshot-label').style.display = 'none';
+      input.focus();
+    };
+    // Сохранить новое имя
+    saveBtn.onclick = async (e) => {
+      e.stopPropagation();
+      const newName = input.value.trim();
+      const { snapshots: all } = await browser.runtime.sendMessage({ action: 'getSnapshots' });
+      const updated = all.map(s => s.id === snap.id ? { ...s, name: newName } : s);
+      await browser.storage.local.set({ snapshots: updated });
+      renderSnapshotsList(updated);
+    };
+    // Enter в input сохраняет
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') saveBtn.onclick(e);
+      if (e.key === 'Escape') {
+        input.style.display = 'none';
+        saveBtn.style.display = 'none';
+        editBtn.style.display = 'inline-block';
+        li.querySelector('.snapshot-label').style.display = 'inline-block';
+      }
     };
     list.appendChild(li);
   });
@@ -37,7 +75,7 @@ function showSnapshotDetail(snapshot) {
   currentSnapshot = snapshot;
   document.getElementById('snapshots-view').classList.add('hidden');
   document.getElementById('snapshot-detail').classList.remove('hidden');
-  document.getElementById('detail-title').textContent = `Снимок от ${snapshot.date}`;
+  document.getElementById('detail-title').textContent = snapshot.name ? `Сохранение: ${snapshot.name}` : `Снимок от ${snapshot.date}`;
   const tabsList = document.getElementById('tabs-list');
   tabsList.innerHTML = '';
   snapshot.tabs.forEach(tab => {
@@ -63,9 +101,9 @@ document.getElementById('fetch-tabs').addEventListener('click', async () => {
   document.getElementById('fetch-tabs').disabled = true;
   document.getElementById('fetch-tabs').textContent = 'Сохраняю...';
   try {
-    // Получаем windowId текущего окна popup
     const win = await browser.windows.getCurrent();
-    const res = await browser.runtime.sendMessage({ action: 'getTabsInfo', windowId: win.id });
+    const name = document.getElementById('snapshot-name').value.trim();
+    const res = await browser.runtime.sendMessage({ action: 'getTabsInfo', windowId: win.id, name });
     if (res && res.success) {
       const snapshots = await fetchSnapshots();
       renderSnapshotsList(snapshots);

@@ -26,9 +26,51 @@
     .tab-list li:hover {
       box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
     }
+    .emoji-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #222;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      padding: 0;
+      cursor: pointer;
+      font-size: 18px;
+      min-width: 0;
+      width: 28px;
+      height: 28px;
+      line-height: 1;
+      transition: box-shadow 0.15s, border-color 0.15s, background 0.15s;
+      margin-left: 2px;
+      margin-right: 2px;
+      outline: none;
+    }
+    .emoji-btn:hover, .emoji-btn:focus {
+      background: #e3f2fd;
+      border-color: #1976d2;
+      box-shadow: 0 2px 8px rgba(25,118,210,0.13);
+    }
+    .snapshot-label-name {
+      font-weight: bold;
+    }
+    .snapshot-label-date {
+      font-size: 12px;
+      color: #888;
+      font-style: italic;
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+    .snapshot-label-count {
+      font-weight: bold;
+      color: #d32f2f;
+      margin-left: 2px;
+    }
   </style>
 </head>
 <body>
+  <input id="snapshot-name" type="text" placeholder="Имя сохранения (необязательно)" style="width:100%;margin-bottom:8px;padding:6px 8px;font-size:15px;box-sizing:border-box;">
   <button id="fetch-tabs">Сохранить текущие вкладки</button>
   <div id="snapshots-view">
     <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Очистить все сохранения</button>
@@ -37,7 +79,12 @@
     <template id="snapshot-item-template">
       <li style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
         <span class="snapshot-label"></span>
-        <button class="delete-snapshot-btn" style="background:#e53935;color:#fff;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;">Удалить</button>
+        <input class="edit-name-input" type="text" style="display:none;width:100%;margin-right:2px;font-size:13px;padding:2px 4px;">
+        <div class="snapshot-btns" style="display:flex;align-items:center;gap:2px;margin-left:auto;">
+          <button class="edit-name-btn emoji-btn" title="Редактировать">✏️</button>
+          <button class="save-name-btn emoji-btn" title="Сохранить" style="display:none;">💾</button>
+          <button class="delete-snapshot-btn emoji-btn" title="Удалить">🗑️</button>
+        </div>
       </li>
     </template>
   </div>
