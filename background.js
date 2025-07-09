@@ -90,6 +90,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           return;
         }
         const windowId = newWin.id;
+        const firstTabId = newWin.tabs && newWin.tabs.length ? newWin.tabs[0].id : null;
         // Сначала закреплённые, потом обычные
         const pinnedTabs = snapshot.tabs.filter(tab => !!tab.pinned);
         const unpinnedTabs = snapshot.tabs.filter(tab => !tab.pinned);
@@ -105,27 +106,8 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             const containers = await browser.contextualIdentities.query({});
             const found = containers.find(c => c.name === tab.container);
             if (found) {
-              // Проверяем разрешение на контейнер
-              let hasPerm = true;
-              if (browser.permissions) {
-                hasPerm = await browser.permissions.contains({ origins: ["<all_urls>"], permissions: ["cookies", "contextualIdentities"] });
-                console.log('[background] Проверка permissions для контейнера', found.cookieStoreId, 'hasPerm:', hasPerm);
-              }
-              if (hasPerm) {
-                createProps.cookieStoreId = found.cookieStoreId;
-                console.log('[background] Добавлен cookieStoreId:', found.cookieStoreId);
-              } else if (browser.permissions && browser.permissions.request) {
-                try {
-                  const granted = await browser.permissions.request({ permissions: ["contextualIdentities"] });
-                  console.log('[background] permissions.request результат:', granted);
-                  if (granted) {
-                    createProps.cookieStoreId = found.cookieStoreId;
-                  }
-                } catch (e) {
-                  console.warn('[background] Пользователь отказал в permissions.request:', e);
-                  // Пользователь отказал — вкладка будет без контейнера
-                }
-              }
+              createProps.cookieStoreId = found.cookieStoreId;
+              console.log('[background] Добавлен cookieStoreId:', found.cookieStoreId);
             } else {
               console.warn('[background] Контейнер не найден:', tab.container);
             }
@@ -135,6 +117,15 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
             console.log('[background] Вкладка создана:', createProps);
           } catch (tabErr) {
             console.error('[background] Ошибка при создании вкладки:', createProps, tabErr);
+          }
+        }
+        // Закрываем первую вкладку, если она есть
+        if (firstTabId) {
+          try {
+            await browser.tabs.remove(firstTabId);
+            console.log('[background] Первая вкладка нового окна закрыта:', firstTabId);
+          } catch (closeErr) {
+            console.error('[background] Ошибка при закрытии первой вкладки:', closeErr);
           }
         }
         console.log('[background] Восстановление вкладок завершено успешно');

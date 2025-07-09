@@ -10,10 +10,19 @@ function renderSnapshotsList(snapshots) {
     list.innerHTML = '<li>Нет сохранённых снимков</li>';
     return;
   }
+  const template = document.getElementById('snapshot-item-template');
   snapshots.forEach((snap, idx) => {
-    const li = document.createElement('li');
-    li.textContent = `${snap.date} (${snap.tabs.length} вкладок)`;
-    li.addEventListener('click', () => showSnapshotDetail(snap));
+    const li = template.content.firstElementChild.cloneNode(true);
+    li.querySelector('.snapshot-label').textContent = `${snap.date} (${snap.tabs.length} вкладок)`;
+    li.querySelector('.snapshot-label').onclick = () => showSnapshotDetail(snap);
+    li.querySelector('.delete-snapshot-btn').onclick = async (e) => {
+      e.stopPropagation();
+      if (!confirm('Удалить это сохранение?')) return;
+      const { snapshots: all } = await browser.runtime.sendMessage({ action: 'getSnapshots' });
+      const filtered = all.filter(s => s.id !== snap.id);
+      await browser.storage.local.set({ snapshots: filtered });
+      renderSnapshotsList(filtered);
+    };
     list.appendChild(li);
   });
 }

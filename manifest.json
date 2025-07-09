@@ -6,6 +6,7 @@
   "permissions": [
     "tabs",
     "contextualIdentities",
+    "cookies",
     "storage"
   ],
   "host_permissions": [

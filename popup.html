@@ -34,6 +34,12 @@
     <button id="clear-snapshots" style="margin-bottom:16px;background:#e53935;color:#fff;">Очистить все сохранения</button>
     <div class="snapshot-title">Сохранённые снимки:</div>
     <ul id="snapshots-list"></ul>
+    <template id="snapshot-item-template">
+      <li style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <span class="snapshot-label"></span>
+        <button class="delete-snapshot-btn" style="background:#e53935;color:#fff;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;">Удалить</button>
+      </li>
+    </template>
   </div>
   <div id="snapshot-detail" class="hidden">
     <button class="back-btn" id="back-btn">Назад</button>
