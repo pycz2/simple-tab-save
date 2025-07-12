@@ -113,10 +113,61 @@ function showSnapshotDetail(snapshot) {
   tabsList.innerHTML = '';
   snapshot.tabs.forEach(tab => {
     let li = document.createElement('li');
-    let pinEmoji = tab.pinned ? '📌 ' : '';
-    let colorBox = tab.containerColor ? `<span style='display:inline-block;width:14px;height:14px;border-radius:3px;background:${tab.containerColor};margin-right:6px;vertical-align:middle;border:1px solid #bbb;box-shadow:0 1px 2px #aaa;'></span>` : '';
-    let iconHtml = tab.favIconUrl ? `<img src="${tab.favIconUrl}" alt="icon" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;border-radius:3px;box-shadow:0 1px 2px #aaa;">` : '';
-    li.innerHTML = `${pinEmoji}${colorBox}${iconHtml}<b>${tab.title}</b><br>URL: <a href="${tab.url}" target="_blank">${tab.url}</a>`;
+    
+    // Pin emoji
+    if (tab.pinned) {
+      const pinSpan = document.createElement('span');
+      pinSpan.textContent = '📌 ';
+      li.appendChild(pinSpan);
+    }
+
+    // Container color
+    if (tab.containerColor) {
+      const colorBox = document.createElement('span');
+      colorBox.style.display = 'inline-block';
+      colorBox.style.width = '14px';
+      colorBox.style.height = '14px';
+      colorBox.style.borderRadius = '3px';
+      colorBox.style.background = tab.containerColor;
+      colorBox.style.marginRight = '6px';
+      colorBox.style.verticalAlign = 'middle';
+      colorBox.style.border = '1px solid #bbb';
+      colorBox.style.boxShadow = '0 1px 2px #aaa';
+      li.appendChild(colorBox);
+    }
+
+    // Site icon
+    if (tab.favIconUrl) {
+      const iconImg = document.createElement('img');
+      iconImg.src = tab.favIconUrl;
+      iconImg.alt = 'icon';
+      iconImg.style.width = '20px';
+      iconImg.style.height = '20px';
+      iconImg.style.verticalAlign = 'middle';
+      iconImg.style.marginRight = '8px';
+      iconImg.style.borderRadius = '3px';
+      iconImg.style.boxShadow = '0 1px 2px #aaa';
+      li.appendChild(iconImg);
+    }
+
+    // Title
+    const titleBold = document.createElement('b');
+    titleBold.textContent = tab.title;
+    li.appendChild(titleBold);
+
+    // New line
+    li.appendChild(document.createElement('br'));
+
+    // URL
+    const urlLabel = document.createTextNode('URL: ');
+    li.appendChild(urlLabel);
+
+    const urlLink = document.createElement('a');
+    urlLink.href = tab.url;
+    urlLink.target = '_blank';
+    urlLink.textContent = tab.url;
+    li.appendChild(urlLink);
+
     tabsList.appendChild(li);
   });
 }
@@ -195,17 +246,17 @@ if (themeGearBtn && themeSelectWrapper) {
 }
 
 if (themeSelect) {
-  // При изменении селектора
+  // When selector is changed
   themeSelect.addEventListener('change', (e) => {
     const value = e.target.value;
     localStorage.setItem('tabsave_theme', value);
     applyTheme(value);
   });
-  // При загрузке
+  // When loaded
   const saved = localStorage.getItem('tabsave_theme') || 'system';
   themeSelect.value = saved;
   applyTheme(saved);
 }
 
-// Инициализация
+// Initialization
 fetchSnapshots().then(renderSnapshotsList); 
