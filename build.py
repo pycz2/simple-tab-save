@@ -5,7 +5,15 @@ import zipfile
 
 DIST_DIR = 'dist'
 ZIP_NAME = 'tabsave_extension.zip'
-EXCLUDE = {'build.py', '.DS_Store'}
+
+INCLUDE = [
+    'background.js',
+    'manifest.json',
+    'popup.html',
+    'popup.js',
+    'icon.svg',
+    'LICENSE',
+]
 
 
 def clean_dist():
@@ -14,8 +22,8 @@ def clean_dist():
     os.makedirs(DIST_DIR)
 
 def copy_files():
-    for f in os.listdir('.'):
-        if os.path.isfile(f) and f not in EXCLUDE and not f.startswith('.'):
+    for f in INCLUDE:
+        if os.path.isfile(f):
             shutil.copy(f, DIST_DIR)
 
 def make_zip():

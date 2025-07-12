@@ -86,7 +86,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
           newWin = await browser.windows.create({
             titlePreface: "TabSave",
             focused: true,
-            url: "https://google.com",
+            url: "about:blank",
             incognito: false,
           });
           console.log('[background] New window created:', newWin);
