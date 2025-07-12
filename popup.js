@@ -14,11 +14,31 @@ function renderSnapshotsList(snapshots) {
   snapshots.forEach((snap, idx) => {
     const li = template.content.firstElementChild.cloneNode(true);
     // Name and tab count on the first line, date on the second
-    let labelHtml = '';
-    labelHtml += `<span class='snapshot-label-name'>${snap.name || 'NoName'}</span>`;
-    labelHtml += ` <span class='snapshot-label-count'>(${snap.tabs.length})</span>`;
-    labelHtml += `<br><span class='snapshot-label-date'>${snap.date}</span>`;
-    li.querySelector('.snapshot-label').innerHTML = labelHtml;
+    const labelElem = li.querySelector('.snapshot-label');
+    while (labelElem.firstChild) {
+      labelElem.removeChild(labelElem.firstChild);
+    }
+    // Name of snapshot
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'snapshot-label-name';
+    nameSpan.textContent = snap.name || 'NoName';
+    labelElem.appendChild(nameSpan);
+
+    // Number of tabs
+    const countSpan = document.createElement('span');
+    countSpan.className = 'snapshot-label-count';
+    countSpan.textContent = `(${snap.tabs.length})`;
+    labelElem.appendChild(document.createTextNode(' '));
+    labelElem.appendChild(countSpan);
+
+    // New line
+    labelElem.appendChild(document.createElement('br'));
+
+    // Date
+    const dateSpan = document.createElement('span');
+    dateSpan.className = 'snapshot-label-date';
+    dateSpan.textContent = snap.date;
+    labelElem.appendChild(dateSpan);
     li.onclick = (event) => {
       // Do not open details if click is on input or button
       if (
