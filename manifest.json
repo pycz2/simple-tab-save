@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TabSave Extension",
   "version": "1.0",
-  "description": "Save nad restore tabs of the current window, including containers and pins.",
+  "description": "Save and restore tabs of the current window, including containers and pins.",
   "permissions": [
     "tabs",
     "contextualIdentities",
@@ -23,5 +23,12 @@
   },
   "background": {
     "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{79f6a692-ef23-4782-af92-6d468c9c0501}",
+      "strict_min_version": "100.0"
+    }
   }
+
 } 
