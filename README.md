@@ -1,6 +1,16 @@
 # TabSave Extension
 
-Firefox extension to save and restore tabs of the current window, including containers and pinned tabs.
+**TabSave Extension**
+
+Simple TabSave is a Firefox extension that allows you to quickly save and restore all tabs from your current window, including support for container tabs and pinned tabs. Easily create named snapshots of your tab sessions, manage and edit your saved sessions, and restore them at any time in a new window. The extension also supports exporting your saved sessions to a JSON file and offers light, dark, or system themes for the popup interface. No account or cloud storage required — all data is stored locally in your browser.
+
+**Main Features:**
+- Save all tabs in the current window, including containers and pinned tabs
+- Restore saved tab sessions in a new window
+- Name, edit, and delete your tab snapshots
+- Export all saved sessions to a JSON file for backup or transfer
+- Choose between light, dark, or system theme
+- Simple, privacy-friendly, and fully local
 
 ## Installation
 
